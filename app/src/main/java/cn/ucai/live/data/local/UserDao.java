@@ -54,7 +54,7 @@ public class UserDao {
 	 * @param contactList
 	 */
 	public void saveAppContactList(List<User> contactList) {
-	    SuperWeChatDBManager.getInstance().saveAppContactList(contactList);
+	    LiveDBManager.getInstance().saveAppContactList(contactList);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class UserDao {
 	 */
 	public Map<String, User> getAppContactList() {
 
-	    return SuperWeChatDBManager.getInstance().getAppContactList();
+	    return LiveDBManager.getInstance().getAppContactList();
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class UserDao {
 	 * @param username
 	 */
 	public void deleteAppContact(String username){
-	    SuperWeChatDBManager.getInstance().deleteAppContact(username);
+	    LiveDBManager.getInstance().deleteAppContact(username);
 	}
 	
 	/**
@@ -80,23 +80,23 @@ public class UserDao {
 	 * @param user
 	 */
 	public void saveAppContact(User user){
-	    SuperWeChatDBManager.getInstance().saveAppContact(user);
+	    LiveDBManager.getInstance().saveAppContact(user);
 	}
 	
 	public void setDisabledGroups(List<String> groups){
-	    SuperWeChatDBManager.getInstance().setDisabledGroups(groups);
+	    LiveDBManager.getInstance().setDisabledGroups(groups);
     }
     
     public List<String>  getDisabledGroups(){       
-        return SuperWeChatDBManager.getInstance().getDisabledGroups();
+        return LiveDBManager.getInstance().getDisabledGroups();
     }
     
     public void setDisabledIds(List<String> ids){
-        SuperWeChatDBManager.getInstance().setDisabledIds(ids);
+        LiveDBManager.getInstance().setDisabledIds(ids);
     }
     
     public List<String> getDisabledIds(){
-        return SuperWeChatDBManager.getInstance().getDisabledIds();
+        return LiveDBManager.getInstance().getDisabledIds();
     }
     
 
@@ -106,7 +106,7 @@ public class UserDao {
 	 * @param contactList
 	 */
 	public void saveContactList(List<EaseUser> contactList) {
-		SuperWeChatDBManager.getInstance().saveContactList(contactList);
+		LiveDBManager.getInstance().saveContactList(contactList);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class UserDao {
 	 */
 	public Map<String, EaseUser> getContactList() {
 
-		return SuperWeChatDBManager.getInstance().getContactList();
+		return LiveDBManager.getInstance().getContactList();
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class UserDao {
 	 * @param username
 	 */
 	public void deleteContact(String username){
-		SuperWeChatDBManager.getInstance().deleteContact(username);
+		LiveDBManager.getInstance().deleteContact(username);
 	}
 
 	/**
@@ -132,6 +132,6 @@ public class UserDao {
 	 * @param user
 	 */
 	public void saveContact(EaseUser user){
-		SuperWeChatDBManager.getInstance().saveContact(user);
+		LiveDBManager.getInstance().saveContact(user);
 	}
 }

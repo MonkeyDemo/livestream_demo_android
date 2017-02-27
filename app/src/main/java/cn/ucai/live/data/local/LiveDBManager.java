@@ -3,12 +3,10 @@ package cn.ucai.live.data.local;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
-import com.hyphenate.util.HanziToPinyin;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,18 +18,18 @@ import cn.ucai.live.LiveApplication;
 import cn.ucai.live.LiveConstants;
 import cn.ucai.live.utils.L;
 
-public class SuperWeChatDBManager {
-    private static final String TAG = SuperWeChatDBManager.class.getSimpleName();
-    static private SuperWeChatDBManager dbMgr = new SuperWeChatDBManager();
+public class LiveDBManager {
+    private static final String TAG = LiveDBManager.class.getSimpleName();
+    static private LiveDBManager dbMgr = new LiveDBManager();
     private DbOpenHelper dbHelper;
     
-    private SuperWeChatDBManager(){
+    private LiveDBManager(){
         dbHelper = DbOpenHelper.getInstance(LiveApplication.getInstance().getApplicationContext());
     }
     
-    public static synchronized SuperWeChatDBManager getInstance(){
+    public static synchronized LiveDBManager getInstance(){
         if(dbMgr == null){
-            dbMgr = new SuperWeChatDBManager();
+            dbMgr = new LiveDBManager();
         }
         return dbMgr;
     }
