@@ -54,12 +54,14 @@ import cn.ucai.live.data.model.Result;
 import cn.ucai.live.data.model.net.NetDao;
 import cn.ucai.live.data.model.net.OnCompleteListener;
 import cn.ucai.live.ui.activity.ChatActivity;
+import cn.ucai.live.ui.activity.LoginActivity;
 import cn.ucai.live.ui.activity.MainActivity;
 import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.ResultUtils;
 
 
 public class LiveHelper {
+
     /**
      * data sync listener
      */
@@ -1138,5 +1140,33 @@ public class LiveHelper {
 
         return appContactList;
     }
+    public void asyncGetCurrentUserInfo(Activity activity) {
+        NetDao.findUserByUsername(activity, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                L.e(TAG,"s="+s);
+                if (s!=null){
+                    Result result = ResultUtils.getResultFromJson(s, User.class);
+                    Log.e(TAG,"result="+result);
+                    if (result!=null&&result.isRetMsg()){
+                        //获得用户数据成功
+                        User user = (User) result.getRetData();
+                        if (user!=null){
+                            L.e(TAG,"user = "+user.toString());
+                            LiveHelper.getInstance().saveAppContact(user);
+                            PreferenceManager.getInstance().setCurrentUserNick(user.getMUserNick());
+                            PreferenceManager.getInstance().setCurrentUserAvatar(user.getAvatar());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                L.e(TAG,"error="+error);
+            }
+        });
+    }
+
 
 }
