@@ -6,7 +6,9 @@ import android.content.Intent;
 
 import cn.ucai.live.I;
 import cn.ucai.live.R;
+import cn.ucai.live.ui.activity.LoginActivity;
 import cn.ucai.live.ui.activity.MainActivity;
+import cn.ucai.live.ui.activity.RegisterActivity;
 
 
 /**
@@ -29,6 +31,15 @@ public class MFGT {
         context.overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
     }
 
+    public static void gotoLogin(Context context){
+        startActivity((Activity) context, LoginActivity.class);
+    }
+    public static void gotoRegister(Context context){
+        startActivity((Activity) context, RegisterActivity.class);
+    }
+    public static void gotoLoginClearTask(Context context) {
+        startActivity((Activity) context,new Intent(context,LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
     public static void gototMain(Activity activity) {
         startActivity(activity, new Intent(activity,MainActivity.class).putExtra(I.BACK_MAIN_FROM_CHAT,true));
     }
