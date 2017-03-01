@@ -1,11 +1,13 @@
 package cn.ucai.live.ui.activity;
 
+import android.app.ProgressDialog;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
@@ -20,16 +22,25 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.live.LiveHelper;
 import cn.ucai.live.data.TestDataRepository;
+import cn.ucai.live.data.local.LiveDBManager;
+import cn.ucai.live.data.local.UserDao;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.model.LiveSettings;
+import cn.ucai.live.data.model.net.NetDao;
+import cn.ucai.live.data.model.net.OnCompleteListener;
+import cn.ucai.live.utils.CommonUtils;
 import cn.ucai.live.utils.Log2FileUtil;
 
 import cn.ucai.live.R;
+import cn.ucai.live.utils.ResultUtils;
+
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.easeui.widget.EaseImageView;
@@ -67,7 +78,7 @@ public class StartLiveActivity extends LiveBaseActivity
   private LiveSettings mSettings;
   private UStreamingProfile mStreamingProfile;
   UEasyStreaming.UEncodingType encodingType;
-
+  ProgressDialog pd;
   boolean isStarted;
 
   private Handler handler = new Handler() {
@@ -87,8 +98,6 @@ public class StartLiveActivity extends LiveBaseActivity
 
     EaseUserUtils.setAppUserAvatar(this,EMClient.getInstance().getCurrentUser(),imgAvatar);
     EaseUserUtils.setAppUserNick(EMClient.getInstance().getCurrentUser(),usernameView);
-    liveId = TestDataRepository.getLiveRoomId(EMClient.getInstance().getCurrentUser());
-    chatroomId = TestDataRepository.getChatRoomId(EMClient.getInstance().getCurrentUser());
     anchorId = EMClient.getInstance().getCurrentUser();
     initEnv();
   }
@@ -170,17 +179,53 @@ public class StartLiveActivity extends LiveBaseActivity
    */
   @OnClick(R.id.btn_start) void startLive() {
     //demo为了测试方便，只有指定的账号才能开启直播
+    pd = new ProgressDialog(this);
+    pd.setMessage("开启直播中...");
+    pd.show();
+    createrLive();
     if (liveId == null) {
-      String[] anchorIds = TestDataRepository.anchorIds;
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < anchorIds.length; i++) {
-        sb.append(anchorIds[i]);
-        if (i != (anchorIds.length - 1)) sb.append(",");
-      }
-      new EaseAlertDialog(this, "demo中只有" + sb.toString() + "这几个账户才能开启直播").show();
       return;
     }
 
+
+  }
+
+  private void createrLive() {
+    User user = EaseUserUtils.getAppUserInfo(EMClient.getInstance().getCurrentUser());
+    if (user!=null) {
+      NetDao.createChatRoom(this, user, new OnCompleteListener<String>() {
+        @Override
+        public void onSuccess(String s) {
+          Log.e(TAG,"s="+s);
+          boolean isSuccess = false;
+          pd.dismiss();
+          if (s!=null){
+            List<String> ids = ResultUtils.getEMResultFromJson(s,String.class);
+            if (ids!=null&&ids.size()>0){
+              Log.e(TAG, "onSuccess: ids="+ids.size() );
+              isSuccess = true;
+              initLive(ids.get(0));
+              startLiveByChatId();
+            }
+          }
+          if (!isSuccess){
+            CommonUtils.showShortToast("创建直播失败!");
+          }
+        }
+
+        @Override
+        public void onError(String error) {
+          pd.dismiss();
+          CommonUtils.showShortToast("创建直播失败！"+error);
+        }
+      });
+    }else{
+        pd.dismiss();
+      CommonUtils.showShortToast("获取用户信息失败!");
+    }
+  }
+
+  private void startLiveByChatId(){
     startContainer.setVisibility(View.INVISIBLE);
     //Utils.hideKeyboard(titleEdit);
     new Thread() {
@@ -200,6 +245,15 @@ public class StartLiveActivity extends LiveBaseActivity
         } while (i >= COUNTDOWN_END_INDEX);
       }
     }.start();
+  }
+  private void initLive(String id) {
+    if (id!=null){
+      liveId = id;
+      chatroomId = id;
+      initEnv();
+    }else{
+      CommonUtils.showShortToast("创建直播失败");
+    }
   }
 
   /**

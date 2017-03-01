@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -80,6 +81,28 @@ public class ResultUtils {
             e.printStackTrace();
         }
         return  null;
+    }
+
+    public static<T> List<T> getEMResultFromJson(String s, Class<T> clazz) {
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            if (!jsonObject.isNull("data")){
+                JSONArray array = jsonObject.getJSONArray("data");
+                if (array!=null){
+                    List<T> list = new ArrayList<T>();
+                    for (int i=0;i<array.length();i++){
+                        JSONObject object = array.getJSONObject(i);
+                        T data = new Gson().fromJson(object.toString(), clazz);
+                        list.add(data);
+                    }
+                    return list;
+                }
+                return null;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 //    public static <T> Result getPageResultFromJson(String jsonStr,Class<T> clazz){
