@@ -146,7 +146,7 @@ public class NetDao {
                 .addParam("description",user.getMUserNick()+"的直播")
                 .addParam("owner",user.getMUserName())
                 .addParam("maxusers",String.valueOf(300))
-                .addParam("members",String.valueOf(1))
+                .addParam("members",user.getMUserName())
                 .targetClass(String.class)
                 .execute(listener);
 

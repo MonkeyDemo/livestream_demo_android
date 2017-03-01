@@ -99,7 +99,17 @@ public class StartLiveActivity extends LiveBaseActivity
     EaseUserUtils.setAppUserAvatar(this,EMClient.getInstance().getCurrentUser(),imgAvatar);
     EaseUserUtils.setAppUserNick(EMClient.getInstance().getCurrentUser(),usernameView);
     anchorId = EMClient.getInstance().getCurrentUser();
-    initEnv();
+    String id = getIntent().getStringExtra("liveId");
+    if (id!=null&&!id.equals("")){
+      liveId = id;
+      chatroomId = id;
+      initEnv();
+    }else{
+      pd = new ProgressDialog(this);
+      pd.setMessage("开启直播中...");
+      pd.show();
+      createrLive();
+    }
   }
 
   public void initEnv() {
@@ -179,15 +189,12 @@ public class StartLiveActivity extends LiveBaseActivity
    */
   @OnClick(R.id.btn_start) void startLive() {
     //demo为了测试方便，只有指定的账号才能开启直播
-    pd = new ProgressDialog(this);
-    pd.setMessage("开启直播中...");
-    pd.show();
-    createrLive();
-    if (liveId == null) {
+    Log.e(TAG, "startLive: liveId=" +liveId);
+    if (liveId==null||liveId.equals("")){
+      CommonUtils.showShortToast("获取直播数据失败！");
       return;
     }
-
-
+    startLiveByChatId();
   }
 
   private void createrLive() {
@@ -200,12 +207,11 @@ public class StartLiveActivity extends LiveBaseActivity
           boolean isSuccess = false;
           pd.dismiss();
           if (s!=null){
-            List<String> ids = ResultUtils.getEMResultFromJson(s,String.class);
-            if (ids!=null&&ids.size()>0){
-              Log.e(TAG, "onSuccess: ids="+ids.size() );
+            String id = ResultUtils.getEMResultFromJson(s);
+            if (id!=null){
+              Log.e(TAG, "onSuccess: ids="+id );
               isSuccess = true;
-              initLive(ids.get(0));
-              startLiveByChatId();
+              initLive(id);
             }
           }
           if (!isSuccess){
@@ -247,13 +253,9 @@ public class StartLiveActivity extends LiveBaseActivity
     }.start();
   }
   private void initLive(String id) {
-    if (id!=null){
       liveId = id;
       chatroomId = id;
       initEnv();
-    }else{
-      CommonUtils.showShortToast("创建直播失败");
-    }
   }
 
   /**

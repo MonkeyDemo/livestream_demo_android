@@ -83,26 +83,20 @@ public class ResultUtils {
         return  null;
     }
 
-    public static<T> List<T> getEMResultFromJson(String s, Class<T> clazz) {
+    public static String getEMResultFromJson(String s) {
+        String id = null;
         try {
             JSONObject jsonObject = new JSONObject(s);
             if (!jsonObject.isNull("data")){
-                JSONArray array = jsonObject.getJSONArray("data");
-                if (array!=null){
-                    List<T> list = new ArrayList<T>();
-                    for (int i=0;i<array.length();i++){
-                        JSONObject object = array.getJSONObject(i);
-                        T data = new Gson().fromJson(object.toString(), clazz);
-                        list.add(data);
+                JSONObject data = jsonObject.getJSONObject("data");
+                if (!data.isNull("id")){
+                        id =data.getString("id");
                     }
-                    return list;
                 }
-                return null;
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return id;
     }
 
 //    public static <T> Result getPageResultFromJson(String jsonStr,Class<T> clazz){
