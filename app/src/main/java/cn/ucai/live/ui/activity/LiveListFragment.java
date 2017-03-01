@@ -139,12 +139,10 @@ public class LiveListFragment extends Fragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    if(pageCount != 0){
                         int lasPos = gm.findLastVisibleItemPosition();
                         if(hasMoreData && !isLoading && lasPos == mAdapter.getItemCount()-1){
                             loadAndShowData();
                         }
-                    }
                 }
             }
 
@@ -181,6 +179,7 @@ public class LiveListFragment extends Fragment {
                             if (isFirstLoading) {
                                 isFirstLoading = false;
                                 mAdapter = new LiveAdapter(getContext(), getLiveRoomList(chatRoomList));
+                                recyclerView.setAdapter(mAdapter);
 //                    listView.setAdapter(adapter);
 
                             } else {
