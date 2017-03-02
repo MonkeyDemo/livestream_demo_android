@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,7 +194,6 @@ public class LiveListFragment extends Fragment {
                     final EMCursorResult<EMChatRoom> result = EMClient.getInstance().chatroomManager().fetchPublicChatRoomsFromServer(pagesize, cursor);
                     //get chat room list
                     final List<EMChatRoom> chatRooms = result.getData();
-                    L.e(TAG,"chatRooms="+chatRooms.size());
                     getActivity().runOnUiThread(new Runnable() {
 
                         public void run() {
@@ -282,10 +282,11 @@ public class LiveListFragment extends Fragment {
                     LiveRoom room = liveRoomList.get(position);
                     if (room.getAnchorId().equals(EMClient.getInstance().getCurrentUser())){
                         //当前登录用户的直播间
-                        context.startActivity(new Intent(context,StartLiveActivity.class).putExtra("liveId",room.getChatroomId()));
+                        context.startActivity(new Intent(context,StartLiveActivity.class).putExtra("liveroom",room));
                     }else{
+                        Log.e(TAG, "onClick: liveId = "+room.getId()+"chatRoomId="+room.getChatroomId() );
                         context.startActivity(new Intent(context, LiveDetailsActivity.class)
-                                .putExtra("liveroom", liveRoomList.get(position)));
+                                .putExtra("liveroom", room));
                     }
                 }
             });

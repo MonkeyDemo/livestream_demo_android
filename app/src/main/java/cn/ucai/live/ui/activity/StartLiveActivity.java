@@ -219,7 +219,6 @@ public class StartLiveActivity extends LiveBaseActivity
           if (s!=null){
             String id = ResultUtils.getEMResultFromJson(s);
             if (id!=null){
-              Log.e(TAG, "onSuccess: ids="+id );
               isSuccess = true;
               chatroomId = id;
               startLiveByChatId();
@@ -276,7 +275,6 @@ public class StartLiveActivity extends LiveBaseActivity
     long time = closeTime-startTime-8*60*60*1000;
     SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
     String t = format.format(new Date(time));
-    Log.e(TAG, "closeLive: showtime="+t );
     deleteChatRoom();
     showConfirmCloseLayout(t);
   }

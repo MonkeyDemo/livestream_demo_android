@@ -47,6 +47,7 @@ public class LiveDetailsActivity extends LiveBaseActivity implements UVideoView.
         LiveRoom liveRoom = getIntent().getParcelableExtra("liveroom");
         liveId = liveRoom.getId();
         chatroomId = liveRoom.getChatroomId();
+        Log.e(TAG, "onActivityCreate: liveId = "+liveId+"chatRoomId="+chatroomId);
         String coverRes = liveRoom.getCover();
         EaseUserUtils.setAppUserAvatarByPath(this,coverRes,coverView,null);
 //        coverView.setImageResource(coverRes);
@@ -63,7 +64,6 @@ public class LiveDetailsActivity extends LiveBaseActivity implements UVideoView.
 
         mVideoView.registerCallback(this);
         mVideoView.setVideoPath(rtmpPlayStreamUrl + liveId);
-        Log.e(TAG, "onActivityCreate: liveId ="+liveId);
 //      mVideoView.setVideoPath(rtmpPlayStreamUrl);
 
     }
