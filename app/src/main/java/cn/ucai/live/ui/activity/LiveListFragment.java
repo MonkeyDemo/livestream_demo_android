@@ -251,7 +251,7 @@ public class LiveListFragment extends Fragment {
             LiveRoom liveRoom = new LiveRoom();
             liveRoom.setName(room.getName());
             liveRoom.setAudienceNum(room.getAffiliationsCount());
-            liveRoom.setId(room.getId());
+            liveRoom.setId(room.getOwner());
             liveRoom.setChatroomId(room.getId());
             liveRoom.setCover(EaseUserUtils.getAppUserInfo(room.getOwner()).getAvatar());
             liveRoom.setAnchorId(room.getOwner());
@@ -282,7 +282,7 @@ public class LiveListFragment extends Fragment {
                     LiveRoom room = liveRoomList.get(position);
                     if (room.getAnchorId().equals(EMClient.getInstance().getCurrentUser())){
                         //当前登录用户的直播间
-                        context.startActivity(new Intent(context,StartLiveActivity.class).putExtra("liveId",room.getId()));
+                        context.startActivity(new Intent(context,StartLiveActivity.class).putExtra("liveId",room.getChatroomId()));
                     }else{
                         context.startActivity(new Intent(context, LiveDetailsActivity.class)
                                 .putExtra("liveroom", liveRoomList.get(position)));

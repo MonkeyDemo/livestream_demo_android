@@ -2,6 +2,7 @@ package cn.ucai.live.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -62,6 +63,7 @@ public class LiveDetailsActivity extends LiveBaseActivity implements UVideoView.
 
         mVideoView.registerCallback(this);
         mVideoView.setVideoPath(rtmpPlayStreamUrl + liveId);
+        Log.e(TAG, "onActivityCreate: liveId ="+liveId);
 //      mVideoView.setVideoPath(rtmpPlayStreamUrl);
 
     }
