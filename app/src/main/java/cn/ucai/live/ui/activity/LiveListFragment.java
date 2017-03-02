@@ -94,7 +94,7 @@ public class LiveListFragment extends Fragment {
         recyclerView.setLayoutManager(gm);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GridMarginDecoration(6));
-//        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
         footLoadingLayout = (LinearLayout) getView().findViewById(R.id.loading_layout);
         footLoadingPB = (ProgressBar)getView().findViewById(R.id.loading_bar);
@@ -209,8 +209,8 @@ public class LiveListFragment extends Fragment {
                             }
                             if (isFirstLoading) {
                                 isFirstLoading = false;
-                                mAdapter = new LiveAdapter(getContext(), getLiveRoomList(chatRoomList));
-                                recyclerView.setAdapter(mAdapter);
+                                mAdapter.initData(getLiveRoomList(chatRooms));
+                                mAdapter.notifyDataSetChanged();
 //                    listView.setAdapter(adapter);
 
                             } else {
@@ -307,6 +307,11 @@ public class LiveListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return liveRoomList.size();
+        }
+
+        public void initData(List<LiveRoom> chatRooms) {
+            this.liveRoomList.clear();
+            this.liveRoomList.addAll(chatRooms);
         }
     }
 

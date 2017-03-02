@@ -106,10 +106,10 @@ public class StartLiveActivity extends LiveBaseActivity
     EaseUserUtils.setAppUserAvatar(this,EMClient.getInstance().getCurrentUser(),imgAvatar);
     EaseUserUtils.setAppUserNick(EMClient.getInstance().getCurrentUser(),usernameView);
     anchorId = EMClient.getInstance().getCurrentUser();
-    String id = getIntent().getStringExtra("liveId");
-    if (id!=null&&!id.equals("")){
-      liveId = id;
-      chatroomId = id;
+    LiveRoom room = getIntent().getParcelableExtra("liveroom");
+    if (room!=null){
+      liveId = room.getId();
+      chatroomId = room.getChatroomId();
       Log.e(TAG, "onActivityCreate: liveId = "+liveId+" chatRoomId="+chatroomId );
     }else{
       liveId = EMClient.getInstance().getCurrentUser();
