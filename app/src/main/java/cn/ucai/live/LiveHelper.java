@@ -41,6 +41,7 @@ import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
 import com.ucloud.common.logger.L;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -50,12 +51,14 @@ import java.util.UUID;
 
 import cn.ucai.live.data.local.LiveDBManager;
 import cn.ucai.live.data.local.UserDao;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.Result;
 import cn.ucai.live.data.model.net.NetDao;
 import cn.ucai.live.data.model.net.OnCompleteListener;
 import cn.ucai.live.ui.activity.ChatActivity;
 import cn.ucai.live.ui.activity.LoginActivity;
 import cn.ucai.live.ui.activity.MainActivity;
+import cn.ucai.live.utils.CommonUtils;
 import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.ResultUtils;
 
@@ -85,6 +88,8 @@ public class LiveHelper {
 	private Map<String, EaseUser> contactList;
 
     private Map<String,User> appContactList;
+
+    private Map<Integer,Gift> appGiftList;
 
 
 
@@ -169,11 +174,44 @@ public class LiveHelper {
             setGlobalListeners();
 			broadcastManager = LocalBroadcastManager.getInstance(appContext);
 	        initDbDao();
+            initGift();
 		}
 	}
 
+    private void initGift() {
+        NetDao.getAllGift(appContext, new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                boolean isSuccess = false;
+                if (s!=null){
+                    Result result = ResultUtils.getListResultFromJson(s,Gift.class);
+                    if (result!=null){
+                        if (result.isRetMsg()){
+                            isSuccess = true;
+                            List<Gift> giftList = (List<Gift>) result.getRetData();
+                            Log.e(TAG, "onSuccess: giftList="+giftList);
+                            Map<Integer,Gift> giftMap = new Hashtable<Integer, Gift>();
+                            for (Gift gift : giftList){
+                                giftMap.put(gift.getId(),gift);
+                            }
+                            savaAppGiftList(giftMap);
+                        }
+                    }
+                }
+                if (!isSuccess){
+                    CommonUtils.showShortToast("礼物列表下载失败");
+                }
+            }
 
-	private EMOptions initChatOptions(){
+            @Override
+            public void onError(String error) {
+                CommonUtils.showShortToast("礼物列表下载失败,error = "+error);
+            }
+        });
+    }
+
+
+    private EMOptions initChatOptions(){
         Log.d(TAG, "init HuanXin Options");
 
         EMOptions options = new EMOptions();
@@ -1100,6 +1138,67 @@ public class LiveHelper {
 
 
     /**
+     * update gift list
+     *
+     * @param giftList
+     */
+    public void savaAppGiftList(Map<Integer, Gift> giftList) {
+        if(giftList == null){
+            if (appGiftList != null) {
+                appGiftList.clear();
+            }
+            return;
+        }
+        appGiftList = giftList;
+    }
+
+
+    /**
+     * get gift list
+     *
+     * @return
+     */
+    public Map<Integer, Gift> getAppGiftList() {
+        if (appGiftList == null||appGiftList.size()==0) {
+            appGiftList = demoModel.getAppGiftList();
+        }
+
+        // return a empty non-null object to avoid app crash
+        if(appGiftList == null){
+            return new Hashtable<Integer, Gift>();
+        }
+
+        return appGiftList;
+    }
+    public void asyncGetCurrentUserInfo(Activity activity) {
+        NetDao.findUserByUsername(activity, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                L.e(TAG,"s="+s);
+                if (s!=null){
+                    Result result = ResultUtils.getResultFromJson(s, User.class);
+                    Log.e(TAG,"result="+result);
+                    if (result!=null&&result.isRetMsg()){
+                        //获得用户数据成功
+                        User user = (User) result.getRetData();
+                        if (user!=null){
+                            L.e(TAG,"user = "+user.toString());
+                            LiveHelper.getInstance().saveAppContact(user);
+                            PreferenceManager.getInstance().setCurrentUserNick(user.getMUserNick());
+                            PreferenceManager.getInstance().setCurrentUserAvatar(user.getAvatar());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                L.e(TAG,"error="+error);
+            }
+        });
+    }
+
+    /**
      * update contact list
      *
      * @param aContactList
@@ -1139,33 +1238,6 @@ public class LiveHelper {
         }
 
         return appContactList;
-    }
-    public void asyncGetCurrentUserInfo(Activity activity) {
-        NetDao.findUserByUsername(activity, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
-            @Override
-            public void onSuccess(String s) {
-                L.e(TAG,"s="+s);
-                if (s!=null){
-                    Result result = ResultUtils.getResultFromJson(s, User.class);
-                    Log.e(TAG,"result="+result);
-                    if (result!=null&&result.isRetMsg()){
-                        //获得用户数据成功
-                        User user = (User) result.getRetData();
-                        if (user!=null){
-                            L.e(TAG,"user = "+user.toString());
-                            LiveHelper.getInstance().saveAppContact(user);
-                            PreferenceManager.getInstance().setCurrentUserNick(user.getMUserNick());
-                            PreferenceManager.getInstance().setCurrentUserAvatar(user.getAvatar());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                L.e(TAG,"error="+error);
-            }
-        });
     }
 
 

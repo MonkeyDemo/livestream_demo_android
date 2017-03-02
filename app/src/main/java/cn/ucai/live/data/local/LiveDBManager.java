@@ -16,6 +16,7 @@ import java.util.Map;
 
 import cn.ucai.live.LiveApplication;
 import cn.ucai.live.LiveConstants;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.utils.L;
 
 public class LiveDBManager {
@@ -275,4 +276,41 @@ public class LiveDBManager {
             db.replace(UserDao.USER_TABLE_NAME, null, values);
         }
     }
+
+    synchronized public void saveAppGiftList(List<Gift> giftList) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if (db.isOpen()){
+            db.delete(UserDao.GIFT_TABLE_NAME,null,null);
+            for (Gift gift:giftList){
+                ContentValues values = new ContentValues();
+                values.put(UserDao.GIFT_COLUMN_ID,gift.getId());
+                if (gift.getGname()!=null)
+                    values.put(UserDao.GIFT_COLUMN_NAME,gift.getId());
+                if (gift.getGprice()!=null)
+                    values.put(UserDao.GIFT_COLUMN_PRICE,gift.getGprice());
+                if (gift.getGurl()!=null)
+                    values.put(UserDao.GIFT_COLUMN_URL,gift.getGurl());
+                db.replace(UserDao.GIFT_TABLE_NAME,null,values);
+            }
+        }
+    }
+
+    synchronized public Map<Integer,Gift> getAppGiftList(){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Map<Integer,Gift> gifts = new Hashtable<>();
+        if (db.isOpen()){
+            Cursor cursor = db.rawQuery("select * from " + UserDao.GIFT_TABLE_NAME/*+" desc "*/, null);
+            while (cursor.moveToNext()){
+                Gift gift = new Gift();
+                gift.setGname(cursor.getString(cursor.getColumnIndex(UserDao.GIFT_COLUMN_NAME)));
+                gift.setGurl(cursor.getString(cursor.getColumnIndex(UserDao.GIFT_COLUMN_URL)));
+                gift.setGprice(cursor.getInt(cursor.getColumnIndex(UserDao.GIFT_COLUMN_PRICE)));
+                gift.setId(cursor.getInt(cursor.getColumnIndex(UserDao.GIFT_COLUMN_ID)));
+                gifts.put(gift.getId(),gift);
+            }
+            cursor.close();
+        }
+        return gifts;
+    }
+
 }
