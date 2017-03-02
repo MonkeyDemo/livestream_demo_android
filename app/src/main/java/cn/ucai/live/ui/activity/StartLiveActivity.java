@@ -41,6 +41,7 @@ import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.domain.User;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.easeui.widget.EaseImageView;
@@ -284,12 +285,14 @@ public class StartLiveActivity extends LiveBaseActivity
   private void showConfirmCloseLayout() {
     //显示封面
     coverImage.setVisibility(View.VISIBLE);
-    List<LiveRoom> liveRoomList = TestDataRepository.getLiveRoomList();
-    for (LiveRoom liveRoom : liveRoomList) {
-      if (liveRoom.getId().equals(liveId)) {
-        coverImage.setImageResource(liveRoom.getCover());
-      }
-    }
+    EaseUserUtils.setAppUserAvatarByPath(this,
+            EaseUserUtils.getAppUserInfo(EMClient.getInstance().getCurrentUser()).getAvatar(),coverImage,null);
+//    List<LiveRoom> liveRoomList = TestDataRepository.getLiveRoomList();
+//    for (LiveRoom liveRoom : liveRoomList) {
+//      if (liveRoom.getId().equals(liveId)) {
+//        coverImage.setImageResource(liveRoom.getCover());
+//      }
+//    }
     View view = liveEndLayout.inflate();
     Button closeConfirmBtn = (Button) view.findViewById(R.id.live_close_confirm);
     TextView usernameView = (TextView) view.findViewById(R.id.tv_username);

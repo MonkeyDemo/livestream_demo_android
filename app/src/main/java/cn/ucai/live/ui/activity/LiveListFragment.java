@@ -35,6 +35,7 @@ import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
 import com.hyphenate.chat.EMGroupInfo;
+import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.exceptions.HyphenateException;
 
 import cn.ucai.live.R;
@@ -92,7 +93,7 @@ public class LiveListFragment extends Fragment {
         recyclerView.setLayoutManager(gm);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GridMarginDecoration(6));
-        recyclerView.setAdapter(mAdapter);
+//        recyclerView.setAdapter(mAdapter);
 
         footLoadingLayout = (LinearLayout) getView().findViewById(R.id.loading_layout);
         footLoadingPB = (ProgressBar)getView().findViewById(R.id.loading_bar);
@@ -114,6 +115,9 @@ public class LiveListFragment extends Fragment {
             public void onRefresh() {
                 srf.setRefreshing(true);
                 tvRefresh.setVisibility(View.VISIBLE);
+                cursor = null;
+                isFirstLoading = true;
+                chatRoomList.clear();
                 loadAndShowData();
             }
         });
@@ -135,7 +139,8 @@ public class LiveListFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
+                int firstPos = gm.findFirstVisibleItemPosition();
+                srf.setEnabled(firstPos==0);
             }
         });
     }
@@ -213,7 +218,7 @@ public class LiveListFragment extends Fragment {
                                     hasMoreData = false;
                                     footLoadingLayout.setVisibility(View.VISIBLE);
                                     footLoadingPB.setVisibility(View.GONE);
-                                    footLoadingText.setText("No more data");
+                                    footLoadingText.setText("没有更多数据了");
                                 }
                                 mAdapter.notifyDataSetChanged();
                             }
@@ -238,7 +243,7 @@ public class LiveListFragment extends Fragment {
 
 
     /**
-     * 生成测试数据
+     * 生成LiveRoom数据
      */
     public static List<LiveRoom> getLiveRoomList(List<EMChatRoom> chatRoom) {
         List<LiveRoom> roomList = new ArrayList<>();
@@ -248,7 +253,7 @@ public class LiveListFragment extends Fragment {
             liveRoom.setAudienceNum(room.getAffiliationsCount());
             liveRoom.setId(room.getId());
             liveRoom.setChatroomId(room.getId());
-            liveRoom.setCover(R.drawable.test1);
+            liveRoom.setCover(EaseUserUtils.getAppUserInfo(room.getOwner()).getAvatar());
             liveRoom.setAnchorId(room.getOwner());
             roomList.add(liveRoom);
         }
