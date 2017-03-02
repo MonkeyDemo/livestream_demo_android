@@ -4,6 +4,7 @@ public interface I {
 
 	String BACK_MAIN_FROM_CHAT = "isFromChat";
 
+
 	public static interface User {
 		String TABLE_NAME							=		"t_superwechat_user";
 		String USER_NAME 							= 		"m_user_name";					//用户账号
@@ -208,8 +209,10 @@ public interface I {
 	String REQUEST_UPDATE_LOCATION 					= 		"updateLocation";
 	/** 客户端发送的分页下载附近的人的请求 */
 	String REQUEST_DOWNLOAD_LOCATION 				= 		"downloadLocation";
+	/**客户端发送的创建聊天室的请求**/
 	String REQUEST_CREATE_LIVE                      =        "live/createChatRoom";
-
+	/** 客户端发送的删除聊天室的请求 **/
+	String REQUEST_DELETE_CHATROOM                  =          "live/deleteChatRoom" ;
 	int REQUESTCODE_PICK = 1;
 	 int REQUESTCODE_CAMERA = 3;
 	 int REQUESTCODE_CUTTING = 2;

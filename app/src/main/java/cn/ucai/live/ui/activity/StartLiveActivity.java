@@ -104,13 +104,10 @@ public class StartLiveActivity extends LiveBaseActivity
     if (id!=null&&!id.equals("")){
       liveId = id;
       chatroomId = id;
-      initEnv();
     }else{
-      pd = new ProgressDialog(this);
-      pd.setMessage("开启直播中...");
-      pd.show();
-      createrLive();
+      liveId = EMClient.getInstance().getCurrentUser();
     }
+    initEnv();
   }
 
   public void initEnv() {
@@ -191,11 +188,14 @@ public class StartLiveActivity extends LiveBaseActivity
   @OnClick(R.id.btn_start) void startLive() {
     //demo为了测试方便，只有指定的账号才能开启直播
     Log.e(TAG, "startLive: liveId=" +liveId);
-    if (liveId==null||liveId.equals("")){
-      CommonUtils.showShortToast("获取直播数据失败！");
-      return;
+    if (chatroomId==null||chatroomId.equals("")){
+      pd = new ProgressDialog(this);
+      pd.setMessage("创建聊天室中...");
+      pd.show();
+      createrLive();
+    }else{
+      startLiveByChatId();
     }
-    startLiveByChatId();
   }
 
   private void createrLive() {
@@ -212,7 +212,8 @@ public class StartLiveActivity extends LiveBaseActivity
             if (id!=null){
               Log.e(TAG, "onSuccess: ids="+id );
               isSuccess = true;
-              initLive(id);
+              chatroomId = id;
+              startLiveByChatId();
             }
           }
           if (!isSuccess){
@@ -253,12 +254,6 @@ public class StartLiveActivity extends LiveBaseActivity
       }
     }.start();
   }
-  private void initLive(String id) {
-      liveId = id;
-      chatroomId = id;
-      initEnv();
-  }
-
   /**
    * 关闭直播显示直播成果
    */
@@ -268,7 +263,22 @@ public class StartLiveActivity extends LiveBaseActivity
       finish();
       return;
     }
+    deleteChatRoom();
     showConfirmCloseLayout();
+  }
+
+  private void deleteChatRoom() {
+    NetDao.deleteChatRoom(this, chatroomId, new OnCompleteListener<String>() {
+      @Override
+      public void onSuccess(String s) {
+        Log.e(TAG, "onSuccess: s" +s);
+      }
+
+      @Override
+      public void onError(String error) {
+
+      }
+    });
   }
 
   @OnClick(R.id.img_bt_switch_voice) void toggleMicrophone(){
