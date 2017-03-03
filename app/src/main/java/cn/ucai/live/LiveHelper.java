@@ -570,7 +570,6 @@ public class LiveHelper {
         // You'd better cache it if you get it from your server
         User user = null;
         user = getAppContactList().get(username);
-        L.e(TAG,"user = "+user);
         // if user is not in your contacts, set inital letter for him/her
         if(user == null){
             user = new User(username);
@@ -757,7 +756,6 @@ public class LiveHelper {
      * @param username
      */
     public void setCurrentUserName(String username){
-        L.e(TAG, "username = "+username);
     	this.username = username;
     	demoModel.setCurrentUserName(username);
     }
@@ -1174,15 +1172,12 @@ public class LiveHelper {
         NetDao.findUserByUsername(activity, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                L.e(TAG,"s="+s);
                 if (s!=null){
                     Result result = ResultUtils.getResultFromJson(s, User.class);
-                    Log.e(TAG,"result="+result);
                     if (result!=null&&result.isRetMsg()){
                         //获得用户数据成功
                         User user = (User) result.getRetData();
                         if (user!=null){
-                            L.e(TAG,"user = "+user.toString());
                             LiveHelper.getInstance().saveAppContact(user);
                             PreferenceManager.getInstance().setCurrentUserNick(user.getMUserNick());
                             PreferenceManager.getInstance().setCurrentUserAvatar(user.getAvatar());

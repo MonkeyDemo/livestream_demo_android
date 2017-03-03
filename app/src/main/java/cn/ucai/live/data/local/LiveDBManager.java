@@ -233,11 +233,9 @@ public class LiveDBManager {
                 user.setMAvatarLastUpdateTime(cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME)));
                 EaseCommonUtils.setAppUserInitialLetter(user);
                 users.put(user.getMUserName(), user);
-                L.e(TAG,"Cursor user = " + user.getMUserName());
             }
             cursor.close();
         }
-        L.e(TAG,"users = "+users);
         return users;
     }
 

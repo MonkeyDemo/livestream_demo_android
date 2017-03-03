@@ -215,7 +215,7 @@ public interface I {
 	/** 客户端发送的删除聊天室的请求 **/
 	String REQUEST_DELETE_CHATROOM                  =          "live/deleteChatRoom" ;
 	/** 客户端发送的获取所有礼物的请求 **/
-	String REQUEST_GET_ALL_GIFT                     =          "live/";
+	String REQUEST_GET_ALL_GIFT                     =          "live/getAllGifts";
 	int REQUESTCODE_PICK = 1;
 	 int REQUESTCODE_CAMERA = 3;
 	 int REQUESTCODE_CUTTING = 2;

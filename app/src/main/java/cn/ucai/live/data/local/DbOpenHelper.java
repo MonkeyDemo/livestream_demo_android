@@ -50,7 +50,7 @@ public class DbOpenHelper extends SQLiteOpenHelper{
 			+ UserDao.USER_COLUMN_NAME_AVATAR_TYPE +" INTEGER,"
 			+ UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME+ " TEXT)";
 
-	private static final String GIFT_TABLE_CREATE = "CREATE TABLE"
+	private static final String GIFT_TABLE_CREATE = "CREATE TABLE "
 			+UserDao.GIFT_TABLE_NAME+" ("
 			+UserDao.GIFT_COLUMN_NAME + " TEXT,"
 			+ UserDao.GIFT_COLUMN_PRICE + " INTEGER,"
