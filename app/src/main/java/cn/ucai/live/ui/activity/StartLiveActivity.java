@@ -179,8 +179,7 @@ public class StartLiveActivity extends LiveBaseActivity
   }
 
   @Override public void onBackPressed() {
-//    mEasyStreaming.stopRecording();
-    closeLive();
+    mEasyStreaming.stopRecording();
     super.onBackPressed();
   }
 

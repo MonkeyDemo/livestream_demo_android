@@ -1,16 +1,20 @@
 package cn.ucai.live.ui.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -18,10 +22,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.live.I;
 import cn.ucai.live.LiveConstants;
+import cn.ucai.live.LiveHelper;
 import cn.ucai.live.data.TestAvatarRepository;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.ui.widget.BarrageLayout;
 import cn.ucai.live.ui.widget.PeriscopeLayout;
 import cn.ucai.live.ui.widget.RoomMessagesView;
+import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.Utils;
 
 import cn.ucai.live.R;
@@ -43,6 +50,8 @@ import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
+
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -450,13 +459,45 @@ public abstract class LiveBaseActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         int giftId = (int) v.getTag();
-        sendGiftMessage(giftId);
+        showPayMentTip(dialog,giftId);
       }
     });
     dialog.show(getSupportFragmentManager(),"RoomGiftListDialog");
   }
 
-  private void sendGiftMessage(int giftId){
+  private void showPayMentTip(final RoomGiftListDialog dialog, final int giftId){
+    if (PreferenceManager.getInstance().getPayMentTip()){
+      sendGiftMessage(dialog,giftId);
+    }else {
+      Gift gift = LiveHelper.getInstance().getAppGiftList().get(giftId);
+      View checkView = getLayoutInflater().inflate(R.layout.layout_payment_tip,null);
+      CheckBox isTipNext = (CheckBox) checkView.findViewById(R.id.cb_tip);
+      isTipNext.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+          PreferenceManager.getInstance().setPayMentTip(isChecked);
+        }
+      });
+      final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle("提示")
+              .setMessage("送该礼物需支付"+gift.getGprice()+",你确定支付吗?");
+      builder.setView(checkView);
+      builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface d, int which) {
+          sendGiftMessage(dialog,giftId);
+        }
+      });
+      builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface d, int which) {
+          dialog.dismiss();
+        }
+      }).create().show();
+    }
+  }
+  private void sendGiftMessage(RoomGiftListDialog dialog,int giftId){
+    dialog.dismiss();
     EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
     message.setReceipt(chatroomId);
     EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_GIFT);
