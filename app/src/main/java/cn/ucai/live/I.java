@@ -3,7 +3,9 @@ package cn.ucai.live;
 public interface I {
 
 	String BACK_MAIN_FROM_CHAT = "isFromChat";
-
+	/** 礼物dialog的列数 **/
+	int GIFT_COLUMN_COUNT = 4;
+	String TYPE_GIFT ="cn.ucai.live.gift" ;
 
 
 	public static interface User {
