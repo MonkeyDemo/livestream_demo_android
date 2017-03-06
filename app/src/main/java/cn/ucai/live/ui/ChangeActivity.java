@@ -9,8 +9,12 @@ import android.widget.TextView;
 
 import com.hyphenate.chat.EMClient;
 
+import java.text.DecimalFormat;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.ucai.live.I;
 import cn.ucai.live.R;
 import cn.ucai.live.data.model.Result;
 import cn.ucai.live.data.model.Wallet;
@@ -18,6 +22,7 @@ import cn.ucai.live.data.model.net.NetDao;
 import cn.ucai.live.data.model.net.OnCompleteListener;
 import cn.ucai.live.ui.activity.BaseActivity;
 import cn.ucai.live.utils.CommonUtils;
+import cn.ucai.live.utils.MFGT;
 import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.ResultUtils;
 
@@ -31,6 +36,7 @@ public class ChangeActivity extends BaseActivity {
     LinearLayout targetLayout;
     View loadingView;
     int change;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,12 +52,12 @@ public class ChangeActivity extends BaseActivity {
         NetDao.loadChange(this, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                boolean success =false;
-                if (s!=null){
+                boolean success = false;
+                if (s != null) {
                     Result resule = ResultUtils.getResultFromJson(s, Wallet.class);
-                    if (resule!=null&&resule.isRetMsg()){
+                    if (resule != null && resule.isRetMsg()) {
                         Wallet wallet = (Wallet) resule.getRetData();
-                        if (wallet!=null){
+                        if (wallet != null) {
                             success = true;
                             change = wallet.getBalance();
                             PreferenceManager.getInstance().setCurrentUserChange(change);
@@ -59,7 +65,7 @@ public class ChangeActivity extends BaseActivity {
                         }
                     }
                 }
-                if (!success){
+                if (!success) {
                     PreferenceManager.getInstance().setCurrentUserChange(0);
                 }
                 loadingView.setVisibility(View.GONE);
@@ -75,6 +81,22 @@ public class ChangeActivity extends BaseActivity {
 
     private void setChange() {
         int change = PreferenceManager.getInstance().getCurrentUserChange();
-        tvChangeBalance.setText("￥"+String.valueOf(Float.valueOf(change)));
+        tvChangeBalance.setText("￥" + new DecimalFormat("#0.00").format(Float.valueOf(change)));
+    }
+
+
+    @OnClick({R.id.tv_change_details, R.id.tv_my_bankcard,R.id.tv_my_red_packet_records})
+    public void checkStatements(View view) {
+        switch (view.getId()) {
+            case R.id.tv_change_details:
+                MFGT.gotoStateMents(this, I.STATEMENTS_TYPE_RECHARGE);
+                break;
+            case R.id.tv_my_bankcard:
+                MFGT.gotoStateMents(this, I.STATEMENTS_TYPE_GIVING);
+                break;
+            case R.id.tv_my_red_packet_records:
+                MFGT.gotoStateMents(this, I.STATEMENTS_TYPE_RECEIVE);
+                break;
+        }
     }
 }

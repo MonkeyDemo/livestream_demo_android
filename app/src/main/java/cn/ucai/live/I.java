@@ -7,6 +7,14 @@ public interface I {
 	int GIFT_COLUMN_COUNT = 4;
 	String TYPE_GIFT ="cn.ucai.live.gift" ;
 
+	/**
+	 * 流水记录类型
+	 */
+	String STATEMENTS_TYPE = "STATEMENTS_TYPE";
+	int STATEMENTS_TYPE_RECHARGE = 1;
+	int STATEMENTS_TYPE_GIVING = 2;
+	int STATEMENTS_TYPE_RECEIVE = 3;
+
 
 
 	public static interface User {
@@ -221,6 +229,12 @@ public interface I {
 	String REQUEST_GET_ALL_GIFT                     =          "live/getAllGifts";
 	/** 客户端发送获取用户余额的请求 **/
 	String REQUEST_GET_BALANCE                      =           "live/getBalance" ;
+	/** 客户端发送赠送礼物的请求 **/
+	String REQUEST_GIVING_GIFT                      =            "live/givingGifts";
+	/** 客户端发送获取送礼流水的请求 **/
+	String REQUEST_GET_GIVE_GIFT_STATEMENTS        =             "live/getGivingGiftStatements";
+	/** 客户端发送获取收礼物流水的请求**/
+	String REQUEST_RECEIVE_GIFT_STATEMENTS          =           "live/getReceivingGiftStatementsServlet";
 	int REQUESTCODE_PICK = 1;
 	 int REQUESTCODE_CAMERA = 3;
 	 int REQUESTCODE_CUTTING = 2;

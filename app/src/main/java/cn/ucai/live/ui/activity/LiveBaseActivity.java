@@ -25,10 +25,16 @@ import cn.ucai.live.LiveConstants;
 import cn.ucai.live.LiveHelper;
 import cn.ucai.live.data.TestAvatarRepository;
 import cn.ucai.live.data.model.Gift;
+import cn.ucai.live.data.model.Result;
+import cn.ucai.live.data.model.Wallet;
+import cn.ucai.live.data.model.net.NetDao;
+import cn.ucai.live.data.model.net.OnCompleteListener;
 import cn.ucai.live.ui.widget.BarrageLayout;
 import cn.ucai.live.ui.widget.PeriscopeLayout;
 import cn.ucai.live.ui.widget.RoomMessagesView;
+import cn.ucai.live.utils.CommonUtils;
 import cn.ucai.live.utils.PreferenceManager;
+import cn.ucai.live.utils.ResultUtils;
 import cn.ucai.live.utils.Utils;
 
 import cn.ucai.live.R;
@@ -107,6 +113,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
   protected abstract void onActivityCreate(@Nullable Bundle savedInstanceState);
 
   protected synchronized void showLeftGiftVeiw(EMMessage message) {
+    Log.e("LiveBaseActivity","showLeftGiftView");
     if (!isGift2Showing) {
       showGift2Derect(message);
     } else if (!isGiftShowing) {
@@ -117,6 +124,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
   }
 
   private void showGift1Derect(final EMMessage message) {
+    Log.e("LiveBaseActivity","showGift1Derect");
     isGiftShowing = true;
     runOnUiThread(new Runnable() {
       @Override public void run() {
@@ -159,6 +167,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
   }
 
   private void showGift2Derect(final EMMessage message) {
+    Log.e("LiveBaseActivity","showGift2");
     isGift2Showing = true;
     runOnUiThread(new Runnable() {
       @Override public void run() {
@@ -283,6 +292,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     @Override public void onCmdMessageReceived(List<EMMessage> messages) {
+      Log.e("LiveBaseActivity","onCmdMessageReceived");
       EMMessage message = messages.get(messages.size() - 1);
       if (LiveConstants.CMD_GIFT.equals(((EMCmdMessageBody) message.getBody()).action())) {
         showLeftGiftVeiw(message);
@@ -468,10 +478,10 @@ public abstract class LiveBaseActivity extends BaseActivity {
   }
 
   private void showPayMentTip(final RoomGiftListDialog dialog, final int giftId){
+    final Gift gift = LiveHelper.getInstance().getAppGiftList().get(giftId);
     if (PreferenceManager.getInstance().getPayMentTip()){
-      sendGiftMessage(dialog,giftId);
+      sendGift(dialog,gift);
     }else {
-      Gift gift = LiveHelper.getInstance().getAppGiftList().get(giftId);
       View checkView = getLayoutInflater().inflate(R.layout.layout_payment_tip,null);
       CheckBox isTipNext = (CheckBox) checkView.findViewById(R.id.cb_tip);
       isTipNext.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -487,7 +497,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
       builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface d, int which) {
-          sendGiftMessage(dialog,giftId);
+          sendGift(dialog,gift);
         }
       });
       builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -495,10 +505,57 @@ public abstract class LiveBaseActivity extends BaseActivity {
         public void onClick(DialogInterface d, int which) {
           dialog.dismiss();
         }
-      }).create().show();
+      }).show();
+    }
+  }
+
+  private void sendGift(final RoomGiftListDialog dialog, final Gift gift){
+    int change = PreferenceManager.getInstance().getCurrentUserChange();
+    if (change>gift.getGprice()){
+      NetDao.givingGift(LiveBaseActivity.this, EMClient.getInstance().getCurrentUser(),
+              chatroom.getOwner(), gift.getId(), 1, new OnCompleteListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                  boolean success = false;
+                  Log.e("s=",s);
+                  if (s !=null){
+                    Result result = ResultUtils.getResultFromJson(s, Wallet.class);
+                    if (result!=null&& result.isRetMsg()){
+                      Wallet wallet = (Wallet) result.getRetData();
+                      success = true;
+                      PreferenceManager.getInstance().setCurrentUserChange(wallet.getBalance());
+                      sendGiftMessage(dialog,gift.getId());
+                    }
+                  }
+                  if (!success){
+                    CommonUtils.showShortToast("打赏失败！");
+                  }
+                }
+
+                @Override
+                public void onError(String error) {
+                  CommonUtils.showShortToast("打赏失败!"+error);
+                }
+              });
+    }else{
+        AlertDialog.Builder builder = new AlertDialog.Builder(LiveBaseActivity.this);
+        builder.setTitle("提示")
+                .setMessage("送该礼物需支付"+gift.getGprice()+",您的余额不足以支付本次打赏，是否充值?")
+                .setPositiveButton("充值", new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface d, int which) {
+                    dialog.dismiss();
+                  }
+                });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        }).show();
     }
   }
   private void sendGiftMessage(RoomGiftListDialog dialog,int giftId){
+    Log.e("LiveBaseActivity","sendGiftMessage");
     dialog.dismiss();
     EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
     message.setReceipt(chatroomId);

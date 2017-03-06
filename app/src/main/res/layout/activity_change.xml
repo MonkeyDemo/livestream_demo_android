@@ -88,7 +88,7 @@
             style="@style/ChangeLeftTextViewStyle"
             android:layout_marginTop="@dimen/size48px"
             android:drawableLeft="@drawable/rp_change_details"
-            android:text="@string/change_detail"/>
+            android:text="@string/my_recharge_statements"/>
 
         <View
             style="@style/DividerStyleNoHead"
@@ -98,7 +98,7 @@
             android:id="@+id/tv_my_bankcard"
             style="@style/ChangeLeftTextViewStyle"
             android:drawableLeft="@drawable/rp_my_bankcard"
-            android:text="@string/my_bank_card"/>
+            android:text="@string/my_give_gift_statements"/>
 
         <View
             style="@style/DividerStyleNoHead"
@@ -109,7 +109,7 @@
             style="@style/ChangeLeftTextViewStyle"
             android:layout_marginBottom="@dimen/size48px"
             android:drawableLeft="@drawable/rp_red_packet_records"
-            android:text="@string/my_money_records"/>
+            android:text="@string/my_receive_gift_statements"/>
 
         <RelativeLayout
             android:id="@+id/layout_verify_identity"

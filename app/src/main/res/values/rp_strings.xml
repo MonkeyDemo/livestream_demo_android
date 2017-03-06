@@ -65,6 +65,9 @@
     <string name="choose_pay_type_title">选择支付方式</string>
     <string name="check_money_records">查看我的红包记录</string>
     <string name="my_money_records">我的红包记录</string>
+    <string name="my_give_gift_statements">我的送礼记录</string>
+    <string name="my_receive_gift_statements">我的收礼记录</string>
+    <string name="my_recharge_statements">我的充值记录</string>
     <string name="my_money">我的红包</string>
     <string name="money_status_no_taken">1个红包共%1$s元，等待对方领取</string>
     <string name="money_status_taken">1个红包共%1$s元，已被对方领取</string>

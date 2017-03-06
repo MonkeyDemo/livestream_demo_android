@@ -11,6 +11,7 @@ import cn.ucai.live.ui.ChangeActivity;
 import cn.ucai.live.ui.activity.LoginActivity;
 import cn.ucai.live.ui.activity.MainActivity;
 import cn.ucai.live.ui.activity.RegisterActivity;
+import cn.ucai.live.ui.activity.StatementsActivity;
 
 
 /**
@@ -48,5 +49,9 @@ public class MFGT {
 
     public static void gotoChange(Activity activity) {
         startActivity(activity,ChangeActivity.class);
+    }
+
+    public static void gotoStateMents(Activity activity, int type) {
+        startActivity(activity,new Intent(activity, StatementsActivity.class).putExtra(I.STATEMENTS_TYPE,type));
     }
 }

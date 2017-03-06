@@ -175,4 +175,43 @@ public class NetDao {
                 .targetClass(String.class)
                 .execute(listener);
     }
+
+    public static void givingGift(Context context,String username,
+                                  String anchor,int giftId,int giftNum,OnCompleteListener<String> listener){
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_GIVING_GIFT)
+                .addParam("uname",username)
+                .addParam("anchor",anchor)
+                .addParam("giftId",String.valueOf(giftId))
+                .addParam("giftNum",String.valueOf(giftNum))
+                .targetClass(String.class)
+                .execute(listener);
+    }
+
+    public static void getGivingGiftStatements(Context context,
+                                               String uname,int pageId,int pageSize,
+                                               OnCompleteListener<String> listener){
+        OkHttpUtils utils = new OkHttpUtils(context);
+        utils.setRequestUrl(I.REQUEST_GET_GIVE_GIFT_STATEMENTS)
+                .addParam("uname",uname)
+                .addParam("pageId",String.valueOf(pageId))
+                .addParam("pageSize",String.valueOf(pageSize))
+                .targetClass(String.class)
+                .execute(listener);
+
+    }
+
+    public static void getReceiveGIftStatements(Context context,
+                                                String anchor,
+                                                int pageId,
+                                                int pageSize,
+                                                OnCompleteListener<String> listener){
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_RECEIVE_GIFT_STATEMENTS)
+                .addParam("anchor",anchor)
+                .addParam("pageId",String.valueOf(pageId))
+                .addParam("pageSize",String.valueOf(pageSize))
+                .targetClass(String.class)
+                .execute(listener);
+    }
 }
