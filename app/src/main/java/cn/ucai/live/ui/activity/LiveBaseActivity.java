@@ -262,9 +262,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
         // 如果是当前会话的消息，刷新聊天页面
         if (username.equals(chatroomId)) {
           if (message.getBooleanAttribute(LiveConstants.EXTRA_IS_BARRAGE_MSG, false)) {
+            Log.e("LiveBaseActivity","messageReceive = "+((EMTextMessageBody) message.getBody()).getMessage());
             barrageLayout.addBarrage(((EMTextMessageBody) message.getBody()).getMessage(),
                 message.getFrom(),message.getStringAttribute(I.User.NICK,message.getFrom()));
           }
+          Log.e("LiveBaseActivity","refreshSelectLast");
           messageView.refreshSelectLast();
         } else {
           if(message.getChatType() == EMMessage.ChatType.Chat && message.getTo().equals(EMClient.getInstance().getCurrentUser())){

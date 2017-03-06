@@ -8,6 +8,7 @@ public interface I {
 	String TYPE_GIFT ="cn.ucai.live.gift" ;
 
 
+
 	public static interface User {
 		String TABLE_NAME							=		"t_superwechat_user";
 		String USER_NAME 							= 		"m_user_name";					//用户账号
@@ -218,6 +219,8 @@ public interface I {
 	String REQUEST_DELETE_CHATROOM                  =          "live/deleteChatRoom" ;
 	/** 客户端发送的获取所有礼物的请求 **/
 	String REQUEST_GET_ALL_GIFT                     =          "live/getAllGifts";
+	/** 客户端发送获取用户余额的请求 **/
+	String REQUEST_GET_BALANCE                      =           "live/getBalance" ;
 	int REQUESTCODE_PICK = 1;
 	 int REQUESTCODE_CAMERA = 3;
 	 int REQUESTCODE_CUTTING = 2;

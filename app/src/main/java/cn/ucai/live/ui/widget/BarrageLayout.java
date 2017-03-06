@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -82,6 +83,7 @@ public class BarrageLayout extends LinearLayout {
     }
 
     public synchronized void addBarrage(String msgContent, String username ,String usernick) {
+        Log.e("BarrageLayout","addBarrage");
         int i = count % 2;
         Message message = handler.obtainMessage();
         message.what = i;

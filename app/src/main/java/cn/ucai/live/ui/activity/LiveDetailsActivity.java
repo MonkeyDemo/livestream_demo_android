@@ -49,7 +49,7 @@ public class LiveDetailsActivity extends LiveBaseActivity implements UVideoView.
         chatroomId = liveRoom.getChatroomId();
         Log.e(TAG, "onActivityCreate: liveId = "+liveId+"chatRoomId="+chatroomId);
         String coverRes = liveRoom.getCover();
-        EaseUserUtils.setAppUserAvatarByPath(this,coverRes,coverView,null);
+        EaseUserUtils.setAppUserAvatar(this,coverRes,coverView);
 //        coverView.setImageResource(coverRes);
 
         anchorId = liveRoom.getAnchorId();
