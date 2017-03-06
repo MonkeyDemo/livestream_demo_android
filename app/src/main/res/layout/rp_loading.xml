@@ -5,6 +5,7 @@
                 android:background="@drawable/rp_loading_bg"
     >
 
+
     <ProgressBar
         android:id="@+id/progressBar1"
         style="@style/LoadingProgressStyle"
